@@ -21,18 +21,17 @@
         (update bucketed-orders-so-far price-key conj order)
         (assoc bucketed-orders-so-far price-key [order]))))
 
-(defn bucket-orders
-  [orders]
+(defn bucket-orders [orders]
   (reduce add-new-order {} orders))
 
-(defn process-orders
-  [orders]
+(defn process-orders [orders]
+  (map process-order orders))
 
-
-  )
-
+(defn process-order [order]
+  (let [price (:price order)]
+    (assoc order :price (if (:side order) price (- price)))))
 
 (defn -main
   "I don't do a whole lot ... yet."
   [& args]
-  (println "Hello, World!"))
+  (print (bucket-orders (process-orders test-orders)))
