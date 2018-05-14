@@ -13,15 +13,17 @@
    :side (rand-nth (vals sides))
    :amount (inc (rand-int 100)) :price (inc (rand-int 50))})
 
+
+(defn add-new-order
+  [bucketed-orders-so-far order]
+  (let [price-key (keyword (str (:price order)))]
+  (if (contains? bucketed-orders-so-far price-key)
+        (update bucketed-orders-so-far price-key conj order)
+        (assoc bucketed-orders-so-far price-key [order]))))
+
 (defn bucket-orders
   [orders]
-  (let [bucketed-orders {}]
-    (for [order orders
-          :let [price (order :price)
-                price-key (keyword (str price)) ]]
-      (if (contains? bucketed-orders price-key)
-        (update bucketed-orders price-key conj order)
-        (assoc bucketed-orders price-key [order])))))
+  (reduce add-new-order {} orders))
 
 (defn process-orders
   [orders]
